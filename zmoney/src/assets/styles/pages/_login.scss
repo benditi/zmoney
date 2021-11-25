@@ -1,0 +1,11 @@
+.login {
+    h1 {
+        font-size: 30px;
+    }
+    form {
+        & >*{
+            margin-left: 10px;
+            font-size: 20px;
+        }
+    }
+}
