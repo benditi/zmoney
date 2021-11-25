@@ -11,7 +11,6 @@ export const EmployeePreview=({employee})=> {
     },[])
     useEffect(()=>{
         return () => {
-            console.log('ending sockets');
             socketService.off('is working', changeWorkStatus)
             socketService.terminate()
         }

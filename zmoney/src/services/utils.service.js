@@ -16,6 +16,5 @@ function toHHMMSS(secNum){
 }
 
 function datesAreOnSameDay(first, second){
-    console.log(first.getDate());
     return first.getDate() === second.getDate();
 }

@@ -10,10 +10,8 @@ async function getUser(req, res){
 }
 
 async function getUsers(req, res){
-    console.log('inside getUsers');
     try {
         var queryParams = req.query;
-        console.log('queryParams', queryParams);
         const users = await userService.query(queryParams) 
         res.send(users)
     } catch(err) {
@@ -40,18 +38,6 @@ async function addUser(req, res){
         res.status(500).send({ err: 'Failed to add user' })
       }
 }
-
-// async function getCount(req, res){
-//     try {
-//         console.log('inside counter');
-//         console.log('req.params.isCountOn', req.params.isCountOn);
-//         const dateNow = req.params.dateNow //do destructure
-//         const count = await userService.loadCount(dateNow)
-//         res.send(count);
-//     } catch (err){
-//         res.status(500).send({err: 'Falied to get count'})
-//     }
-// }
 
 
 module.exports = {

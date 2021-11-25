@@ -1,49 +1,5 @@
 import { httpService } from "./http.service"
 
-var gUsers = [
-    {
-        "_id": "u101",
-        "isEmployer": false,
-        "fullname": "David Ben Ishai",
-        "phoneNumber": "0549732189",
-        "password": "1234",
-        "totalHours": 5.5,
-        "totalSessions": 7,
-        "isWorkingNow": true
-    },
-    {
-        "_id": "u102",
-        "isEmployer": false,
-        "fullname": "Joni Cohen",
-        "phoneNumber": "0549732337",
-        "password": "1234",
-        "totalHours": 22.5,
-        "totalSessions": 10,
-        "isWorkingNow": false
-    },
-    {
-        "_id": "u103",
-        "isEmployer": false,
-        "fullname": "Moti Mizrachi",
-        "phoneNumber": "0549732322",
-        "password": "1234",
-        "totalHours": 32.0,
-        "totalSessions": 15,
-        "isWorkingNow": false
-    },
-    {
-        "_id": "u104",
-        "isEmployer": true,
-        "fullname": "Moti Mizrachi",
-        "phoneNumber": "0549732322",
-        "password": "1234",
-        "totalHours": null,
-        "totalSessions": null,
-        "isWorkingNow": null
-    },
-
-]
-
 export const userService = {
     getEmployees,
     getEmployee,
@@ -59,15 +15,12 @@ async function getEmployees(filterBy) {
 }
 
 async function getEmployee(employeeId) {
-    const employee = gUsers.find(user => user._id === employeeId)
-    return employee;
+    const id = employeeId;
+    return httpService.get(`user/${id}`)
 }
 
 async function updateEmployee(updatedEmployee) {
-    // const employeeIdx = gUsers.findIndex(employee => employee._id === updatedEmployee._id)
-    // gUsers.splice(employeeIdx, 1, updatedEmployee)
     const id = updatedEmployee._id;
-    console.log('updatedEmployee', updatedEmployee);
     const user = await httpService.put(`user/${id}`, updatedEmployee);
     return user;
 }
@@ -85,6 +38,7 @@ async function getCounterDate() {
 async function onLogin(phoneNumber, password) {
     const users = await getEmployees();
     const loggedInUser = users.find(user => (user.phoneNumber === phoneNumber && user.password === password));
+    // sessionStorage.setItem('USER', loggedInUser)
     return loggedInUser;
 }
 
@@ -101,6 +55,9 @@ async function addEmployee(fullname, phoneNumber, password) {
         dayCount: 0
     }
     const answer = await httpService.post('user', newEmployee)
-    if (answer.insertedId) return newEmployee;
+    if (answer.insertedId) {
+        newEmployee._id = answer.insertedId;
+        return newEmployee;
+    }
     else return null;
 }

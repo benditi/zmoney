@@ -11,7 +11,6 @@ module.exports = {
 async function query(filterBy) {
     try {
         const criteria = _buildCriteria(filterBy)
-        console.log('criteria', criteria);
         const collection = await dbService.getCollection('user')
         const users = await collection.find(criteria).toArray()
         return users
@@ -48,7 +47,6 @@ async function getById(userId) {
 
 async function update(user) {
     try {
-        console.log('service user', user);
         user._id = ObjectId(user._id)
         const collection = await dbService.getCollection('user')
         await collection.updateOne({ _id: user._id }, { $set: user })
@@ -67,14 +65,3 @@ async function add(user) {
         throw err
     }
 }
-
-// function loadCount(isCountOn){
-//     console.log('backend service isCountOn', isCountOn);
-//     if (isCountOn){
-//         intervalCount = setInterval(addCount, 1000)
-//         return null;
-//     } else {
-//         clearInterval(intervalCount);
-//         return gCount;
-//     }
-// }

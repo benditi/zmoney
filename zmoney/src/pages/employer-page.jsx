@@ -20,7 +20,6 @@ export const EmployerPage = () => {
             }
             return state.user
         })
-    console.log(employees);
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(onGetEmployees())
