@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import { socketService } from "../services/socket.service"
 import { userService } from "../services/user.service"
 import { utilsService } from "../services/utils.service"
 import { onUpdateEmployee } from '../store/user.action'
@@ -20,7 +21,6 @@ export const EmployeePage = () => {
             console.log('setting new date');
             const dateNow = new Date();
             userService.setCounterDate(dateNow.getMinutes().toString());
-            setIsDateChanged(prevState => !prevState)
         }
         if (isCountOn) {
             clockInterval.current = setInterval(() => {
@@ -49,12 +49,13 @@ export const EmployeePage = () => {
 
     //Check if day has changed to stop count and update user
     useEffect(() => {
-        if (isCountOn && count===0)
-        console.log('new day interval');
-        dayInterval.current = setInterval(() => {
-            console.log('inside interval');
-            stopDay();
-        }, 10000);
+        if (isCountOn && count === 0) {
+            console.log('new day interval');
+            dayInterval.current = setInterval(() => {
+                console.log('inside interval');
+                stopDay();
+            }, 10000);
+        }
         return () => {
             console.log('cleared interval');
             clearInterval(dayInterval.current)
@@ -78,14 +79,16 @@ export const EmployeePage = () => {
             console.log('date', date);
             console.log('nowDate', nowDate);
             //All of this needs to happen only at end of day
-            if (date && date !== nowDate.getMinutes().toString()) {
+            if ((date && date !== nowDate.getDate().toString()) || isDateChanged && !isCountOn) {
                 console.log('day finished');
-                // if (isCountOn){
-                //     console.log('but clock works');
-                //     clearInterval(dayInterval.current);
-                //     setIsDateChanged(prevState => !prevState)
-                //     return;
-                // }
+                if (isCountOn) {
+                    console.log('but clock works');
+                    clearInterval(dayInterval.current);
+                    const dateNow = new Date();
+                    userService.setCounterDate(dateNow.getDate().toString());
+                    setIsDateChanged(prevState => !prevState)
+                    return;
+                }
                 clearInterval(dayInterval.current);
                 console.log('employee.startSession', employee.startSession);
                 // const timeDiff = (Date.now() - employee.startSession) / 1000;
@@ -107,6 +110,24 @@ export const EmployeePage = () => {
     const toggleButton = () => {
         setIsCountOn((prevState) => !prevState);
     }
+    //sockets
+    useEffect(() => {
+        if (isCountOn) {
+            socketService.setup();
+            socketService.emit('chat topic', employee._id);
+            socketService.emit('is working', true);
+        } else {
+            socketService.emit('is working', false);
+        }
+    },
+        [isCountOn])
+        
+    useEffect(()=>{
+        return () => {
+            console.log('ending sockets');
+            socketService.terminate()
+        }
+    },[])
 
     if (!employee) return <div>Loading...</div>
     return (

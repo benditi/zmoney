@@ -26,9 +26,15 @@ if (process.env.NODE_ENV === 'production') {
     app.use(cors(corsOptions))
 }
 const userRoutes = require('./api/user/user.routes')
-//routes
-app.use('/api/user', userRoutes)
+const {connectSockets} = require('./services/socket.service')
 
+//routes
+const setupAsyncLocalStorage = require('./middlewares/setupAls.middleware')
+app.all('*', setupAsyncLocalStorage)
+app.use('/api/user', userRoutes)
+connectSockets(http, session)
+
+const logger = require('./services/logger.service')
 const port = process.env.PORT || 3030
 http.listen(port, () => {
     console.log('Server is running on port: ' + port);
