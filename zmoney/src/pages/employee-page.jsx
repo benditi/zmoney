@@ -67,15 +67,17 @@ export const EmployeePage = () => {
             setIsDateChanged(true);
             return;
         }
-        clearInterval(dayInterval.current);
-        const sessionHours = employee.dayCount / 3600;
-        employee.totalHours += sessionHours;
-        clearInterval(clockInterval.current);
-        employee.startSession = 0;
-        employee.dayCount = 0;
-        dispatch(onUpdateEmployee(employee));
-        setCount(0);
-        setIsCountOn(false);
+        if (isDateChanged){
+            clearInterval(dayInterval.current);
+            const sessionHours = employee.dayCount / 3600;
+            employee.totalHours += sessionHours;
+            clearInterval(clockInterval.current);
+            employee.startSession = 0;
+            employee.dayCount = 0;
+            dispatch(onUpdateEmployee(employee));
+            setCount(0);
+            setIsCountOn(false);
+        }
     },
         [isDateChanged])
 
