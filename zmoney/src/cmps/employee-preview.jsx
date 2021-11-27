@@ -15,13 +15,13 @@ export const EmployeePreview=({employee})=> {
         socketService.emit('chat topic', employee._id)
         socketService.on('is working', setIsWorking)
     },[])
-    // useEffect(()=>{
-    //     return () => {
-    //         console.log('closed socket');
-    //         socketService.off('is working', setIsWorking)
-    //         socketService.terminate()
-    //     }
-    // },[])
+    useEffect(()=>{
+        return () => {
+            console.log('closed socket');
+            socketService.off('is working', setIsWorking)
+            socketService.terminate()
+        }
+    },[])
     return (
         <tr>
             <td>{employee.fullname}</td>
