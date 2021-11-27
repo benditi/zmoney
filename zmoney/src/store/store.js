@@ -1,10 +1,11 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
+import { userService } from '../services/user.service';
 
 
 const initialState = {
     employees:[],
-    user: null
+    user: userService.getLoggedinUser()
 }
 
 function myReducer(state = initialState, action) {

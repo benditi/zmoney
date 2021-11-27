@@ -15,6 +15,7 @@ function createSocketService() {
             socket = io(baseUrl)
         },
         on(eventName, cb) {
+            console.log('event name', eventName);
             socket.on(eventName, cb)
         },
         off(eventName, cb = null) {
@@ -27,6 +28,9 @@ function createSocketService() {
         },
         terminate() {
             socket = null;
+        },
+        showContection(){
+            return socket.connection
         }
     }
     return socketService

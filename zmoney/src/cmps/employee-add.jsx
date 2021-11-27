@@ -10,7 +10,7 @@ export const EmployeeAdd = ({toggleEmployeeAdd}) => {
     const onAddEmployee = async (ev) => {
         if (!password || !phoneNumber || !fullname) return;
         ev.preventDefault()
-        const answer = await dispatch(onAddNewEmployee(fullname, phoneNumber, password))
+        await dispatch(onAddNewEmployee(fullname, phoneNumber, password))
         toggleEmployeeAdd()
     }
 

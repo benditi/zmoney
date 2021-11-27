@@ -5,7 +5,8 @@ module.exports = {
     query,
     getById,
     update,
-    add
+    add,
+    getByPhoneNumber
 }
 
 async function query(filterBy) {
@@ -61,6 +62,15 @@ async function add(user) {
         const collection = await dbService.getCollection('user')
         const addedUser = await collection.insertOne(user)
         return addedUser
+    } catch (err) {
+        throw err
+    }
+}
+async function getByPhoneNumber(phoneNumber){
+    try {
+        const collection = await dbService.getCollection('user')
+        const user = await collection.findOne({ 'phoneNumber': phoneNumber })
+        return user
     } catch (err) {
         throw err
     }

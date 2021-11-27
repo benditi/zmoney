@@ -1,8 +1,7 @@
 import { useEffect, useState, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useNavigate, useParams } from "react-router"
+import { useNavigate } from "react-router"
 import { socketService } from "../services/socket.service"
-import { userService } from "../services/user.service"
 import { utilsService } from "../services/utils.service"
 import { onUpdateEmployee } from '../store/user.action'
 
@@ -13,14 +12,15 @@ export const EmployeePage = () => {
     const clockInterval = useRef();
     const dayInterval = useRef();
     const dispatch = useDispatch();
-    
+
     let employee = useSelector((state) => {
         return state.user
     })
     useEffect(() => {
         if (isCountOn && count === 0) {
             const dateNow = new Date();
-            userService.setCounterDate(dateNow.getMinutes().toString());
+            employee.startingDate = dateNow.getDate().toString();
+            dispatch(onUpdateEmployee(employee));
         }
         if (isCountOn) {
             clockInterval.current = setInterval(() => {
@@ -49,17 +49,46 @@ export const EmployeePage = () => {
     useEffect(() => {
         if (isCountOn && count === 0) {
             dayInterval.current = setInterval(() => {
-                stopDay();
+                async function getStoredDate() {
+                    const date = employee.startingDate;
+                    const nowDate = new Date();
+                    // checking if date has changed and clock has stopped
+                    if ((date && date !== nowDate.getDate().toString())) {
+                        setIsDateChanged(prevState => !prevState);
+                    }
+                }
+                getStoredDate()
             }, 10000);
         }
+    }, [isCountOn])
+    useEffect(() => {
+        //All of this needs to happen only at end of day-
+        if (isCountOn) {
+            setIsDateChanged(true);
+            return;
+        }
+        clearInterval(dayInterval.current);
+        const sessionHours = employee.dayCount / 3600;
+        employee.totalHours += sessionHours;
+        clearInterval(clockInterval.current);
+        employee.startSession = 0;
+        employee.dayCount = 0;
+        dispatch(onUpdateEmployee(employee));
+        setCount(0);
+        setIsCountOn(false);
+    },
+        [isDateChanged])
+
+    useEffect(() => {
         return () => {
             clearInterval(dayInterval.current)
         }
-    }, [isCountOn])
+    },
+        [])
     const navigate = useNavigate();
     //checking if user loggedin while clock allready running
     useEffect(() => {
-        if (!employee){
+        if (!employee) {
             navigate('/')
             return
         }
@@ -69,41 +98,14 @@ export const EmployeePage = () => {
         }
     }, [])
 
-    //stopsDay 
-    const stopDay = () => {
-        async function getStoredDate() {
-            const date = await userService.getCounterDate();
-            const nowDate = new Date();
-            //All of this needs to happen only at end of day- checking if date has changed and clock has stopped
-            if ((date && date !== nowDate.getDate().toString()) || isDateChanged && !isCountOn) {
-                if (isCountOn) {
-                    clearInterval(dayInterval.current);
-                    const dateNow = new Date();
-                    userService.setCounterDate(dateNow.getDate().toString());
-                    setIsDateChanged(prevState => !prevState);
-                    return;
-                }
-                clearInterval(dayInterval.current);
-                const sessionHours = employee.dayCount / 3600;
-                employee.totalHours += sessionHours;
-                clearInterval(clockInterval.current);
-                employee.startSession = 0;
-                employee.dayCount = 0;
-                dispatch(onUpdateEmployee(employee));
-                setCount(0);
-                setIsCountOn(false);
-            }
-        }
-        getStoredDate()
-    }
-
     const toggleButton = () => {
         setIsCountOn((prevState) => !prevState);
     }
+
     //sockets
     useEffect(() => {
+        socketService.setup();
         if (isCountOn) {
-            socketService.setup();
             socketService.emit('chat topic', employee._id);
             socketService.emit('is working', true);
         } else {
@@ -111,12 +113,12 @@ export const EmployeePage = () => {
         }
     },
         [isCountOn])
-        
-    useEffect(()=>{
+
+    useEffect(() => {
         return () => {
             socketService.terminate()
         }
-    },[])
+    }, [])
 
     if (!employee) return <div>Loading...</div>
     return (

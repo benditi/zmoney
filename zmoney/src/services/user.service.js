@@ -6,10 +6,12 @@ export const userService = {
     updateEmployee,
     addEmployee,
     onLogin,
+    getLoggedinUser,
     setCounterDate,
     getCounterDate
 }
 
+const STORAGE_KEY = 'USER';
 async function getEmployees(filterBy) {
     return httpService.get('user', { params: filterBy })
 }
@@ -36,9 +38,9 @@ async function getCounterDate() {
 }
 
 async function onLogin(phoneNumber, password) {
-    const users = await getEmployees();
-    const loggedInUser = users.find(user => (user.phoneNumber === phoneNumber && user.password === password));
-    // sessionStorage.setItem('USER', loggedInUser)
+    const loggedInUser = await httpService.post('auth', {phoneNumber, password})
+    console.log('loggedInUser', loggedInUser);
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(loggedInUser))
     return loggedInUser;
 }
 
@@ -52,7 +54,8 @@ async function addEmployee(fullname, phoneNumber, password) {
         totalSessions: 0,
         isWorkingNow: false,
         startSession: 0,
-        dayCount: 0
+        dayCount: 0,
+        startingDate:0
     }
     const answer = await httpService.post('user', newEmployee)
     if (answer.insertedId) {
@@ -60,4 +63,8 @@ async function addEmployee(fullname, phoneNumber, password) {
         return newEmployee;
     }
     else return null;
+}
+
+function getLoggedinUser() {
+    return JSON.parse(sessionStorage.getItem(STORAGE_KEY))
 }

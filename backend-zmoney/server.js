@@ -2,7 +2,6 @@ const express = require('express')
 const cors = require('cors')
 const path = require('path')
 const expressSession = require('express-session')
-
 const app = express()
 const http = require('http').createServer(app)
 
@@ -26,15 +25,16 @@ if (process.env.NODE_ENV === 'production') {
     app.use(cors(corsOptions))
 }
 const userRoutes = require('./api/user/user.routes')
+const authRoutes = require('./api/auth/auth.routes')
 const {connectSockets} = require('./services/socket.service')
 
 //routes
 const setupAsyncLocalStorage = require('./middlewares/setupAls.middleware')
 app.all('*', setupAsyncLocalStorage)
 app.use('/api/user', userRoutes)
+app.use('/api/auth', authRoutes)
 connectSockets(http, session)
 
-const logger = require('./services/logger.service')
 const port = process.env.PORT || 3030
 http.listen(port, () => {
     console.log('Server is running on port: ' + port);
