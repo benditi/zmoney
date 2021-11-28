@@ -107,11 +107,10 @@ export const EmployeePage = () => {
     //sockets
     useEffect(() => {
         socketService.setup();
+        socketService.emit('chat topic', employee._id);
         if (isCountOn) {
-            socketService.emit('chat topic', employee._id);
             socketService.emit('is working', true);
         } else {
-            socketService.emit('chat topic', employee._id);
             socketService.emit('is working', false);
         }
     },
