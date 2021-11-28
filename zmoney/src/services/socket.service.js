@@ -29,7 +29,7 @@ function createSocketService() {
         terminate() {
             socket = null;
         },
-        showContection(){
+        showContection() {
             return socket.connection
         }
     }

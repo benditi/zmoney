@@ -111,6 +111,7 @@ export const EmployeePage = () => {
             socketService.emit('chat topic', employee._id);
             socketService.emit('is working', true);
         } else {
+            socketService.emit('chat topic', employee._id);
             socketService.emit('is working', false);
         }
     },

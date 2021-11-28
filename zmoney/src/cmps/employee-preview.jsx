@@ -13,15 +13,19 @@ export const EmployeePreview=({employee})=> {
         console.log('setup socket', employee._id);
         socketService.setup()
         socketService.emit('chat topic', employee._id)
-        socketService.on('is working', setIsWorking)
+        socketService.on('is working', changeWorkStatus)
     },[])
     useEffect(()=>{
         return () => {
             console.log('closed socket');
-            socketService.off('is working', setIsWorking)
+            socketService.off('is working', changeWorkStatus)
             socketService.terminate()
         }
     },[])
+    const changeWorkStatus=(status)=>{
+        console.log('changing status to:', status);
+        setIsWorking(status)
+    }
     return (
         <tr>
             <td>{employee.fullname}</td>

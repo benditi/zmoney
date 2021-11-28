@@ -24,6 +24,7 @@ function connectSockets(http, session) {
         })
         socket.on('is working', isWorking => {
             console.log('working status', isWorking);
+            console.log('topic:', socket.myTopic);
             // emits only to sockets in the same room
             gIo.to(socket.myTopic).emit('is working', isWorking)
         })
