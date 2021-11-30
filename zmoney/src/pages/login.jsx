@@ -33,7 +33,7 @@ export const Login = () => {
 
     return (
         <section className="login flex column align-center">
-            <h1>Zmoney- Login</h1>
+            <h1>Login</h1>
             <form onSubmit={onLogin}>
                 <input
                     type="text"

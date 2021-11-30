@@ -3,18 +3,20 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import reportWebVitals from './reportWebVitals';
-import {RootCmp} from './root-cmp.jsx';
+import { RootCmp } from './root-cmp.jsx';
 import './assets/styles/main.scss';
 import { store } from './store/store';
+import { AppHeader } from './cmps/app-header';
 
 ReactDOM.render(
   <React.StrictMode>
- <Provider store={store}>
+    <Provider store={store}>
       <Router>
+        <AppHeader />
         <RootCmp />
       </Router>
-    </Provider>  
-    </React.StrictMode>,
+    </Provider>
+  </React.StrictMode>,
   document.getElementById('root')
 );
 

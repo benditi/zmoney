@@ -1,7 +1,6 @@
 const MongoClient = require('mongodb').MongoClient
-
+const uri = 'mongodb+srv://benditi:cat34car%21@cluster0.imtdz.mongodb.net/test?retryWrites=true&w=majority'
 const config = require('../config')
-
 module.exports = {
     getCollection
 }
@@ -15,6 +14,7 @@ async function getCollection(collectionName) {
     try {
         const db = await connect()
         const collection = await db.collection(collectionName)
+        console.log('collection', collection);
         return collection
     } catch (err) {
         logger.error('Failed to get Mongo collection', err)

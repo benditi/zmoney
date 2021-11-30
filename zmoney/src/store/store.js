@@ -21,11 +21,10 @@ function myReducer(state = initialState, action) {
             return {...state, user: action.user}
         case 'ADD_USER':
             return {...state, employees: [...state.employees, action.user]}
+        case 'LOGOUT':
+            return {...state, user: null}
         default: return state;
     }
-    // For debug:
-    // window.storeState = newState;
-    // return newState;
 }
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

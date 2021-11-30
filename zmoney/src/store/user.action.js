@@ -46,3 +46,13 @@ export function onAddNewEmployee(fullname, phoneNumber, password){
         }
     }
 }
+
+export function onUserLogout(){
+    return (dispatch)=>{
+        try {
+            dispatch({type:'LOGOUT'})
+        } catch (err){
+            console.log(err);
+        }
+    }
+}
